@@ -112,4 +112,22 @@ public class Respawn : NetworkBehaviour {
     public void CmdRemoteGrab (string player, NetworkInstanceId id) {
         NetworkServer.FindLocalObject(id).GetComponent<Pickupable>().GrabRelay(player);
     }
+    
+    public void resetSpawn (NetworkInstanceId id) {
+        CmdResetSpawn(id);
+    }
+    
+    [Command]
+    void CmdResetSpawn (NetworkInstanceId id) {
+        RpcResetSpawn(NetworkServer.FindLocalObject(id)); //passing gameobject to RPC looks up object for you
+    }
+    
+    [ClientRpc]
+    void RpcResetSpawn (GameObject obj) {
+        GameObject p = FindLocalPlayer();
+        if (p.GetComponent<Respawn>().spawnpoint == obj) {
+			p.GetComponent<Respawn>().spawnpoint = GameObject.Find("spawn");
+			GameObject.Find("Text").GetComponent<Statusmsg>().Show("spawn removed");
+		}
+    }
 }

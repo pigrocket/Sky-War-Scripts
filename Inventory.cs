@@ -127,8 +127,14 @@ public class Inventory : MonoBehaviour {
 	}
 	
 	void OnGUI() {
-		if (open) Cursor.lockState = CursorLockMode.None;
-		else Cursor.lockState = CursorLockMode.Locked;
+		if (open) {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+		else {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
 	}
 	
 	List<Transform> getChildren(Transform transform) {

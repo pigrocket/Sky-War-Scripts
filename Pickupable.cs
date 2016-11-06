@@ -67,8 +67,8 @@ public class Pickupable : NetworkBehaviour {
 		if (distance.sqrMagnitude<=9 && !transform.parent) {
 			GUICrossHair.grabmode = 1;
 			if (Input.GetMouseButtonDown(0) && physics != 2) { //on left mouse click
-                GrabSubvertAuthority(localName);
                 NewOwner(localName);
+                GrabSubvertAuthority(localName);
                 holding = true;
                 drop = false;
 				if (tag == "Respawn")
@@ -78,10 +78,7 @@ public class Pickupable : NetworkBehaviour {
 	}
 	
 	void resetSpawn() {
-		if (GameObject.Find("FPSController").GetComponent<Respawn>().spawnpoint != GameObject.Find("spawn")) {
-			GameObject.Find("FPSController").GetComponent<Respawn>().spawnpoint = GameObject.Find("spawn");
-			GameObject.Find("Text").GetComponent<Statusmsg>().Show("spawn removed");
-		}
+        localPlayer.GetComponent<Respawn>().resetSpawn(this.gameObject.GetComponent<NetworkIdentity>().netId);
 	}
     
     public void GrabSubvertAuthority(string player) {
@@ -161,7 +158,7 @@ public class Pickupable : NetworkBehaviour {
 		if (Input.GetKeyDown("escape") || Input.GetMouseButtonUp(0)) drop = true;
 		if (rigB.position.y < -50) {
 			if (tag == "Respawn") resetSpawn();
-			Destroy (gameObject);
+			NetworkServer.Destroy(gameObject);
 		}
         if (!transform.parent) return;
 		if (holding) {
@@ -182,7 +179,7 @@ public class Pickupable : NetworkBehaviour {
                 CmdDrop();
 				holding = false;
 				if (tag == "Respawn" && physics == 0) {
-					GameObject.Find("FPSController").GetComponent<Respawn>().spawnpoint = gameObject;
+					localPlayer.GetComponent<Respawn>().spawnpoint = gameObject;
 					GameObject.Find("Text").GetComponent<Statusmsg>().Show("spawn set");
 				}
 				drop = false;
