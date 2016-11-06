@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityStandardAssets.Characters.FirstPerson;
+using UnityEngine.Networking;
  
-public class PlayerHealthBar : MonoBehaviour{
+public class PlayerHealthBar : NetworkBehaviour{
    
     GameObject flash;
     int hurtcooldown;
@@ -26,16 +28,18 @@ public class PlayerHealthBar : MonoBehaviour{
         previousHealth = maxHP; // assign the empty value to store the value of max health
         healthBarWidth = 100f; // create the health bar value
         myFloat = (maxHP / 100) * 10; // affects the health drainage
+        if (!isLocalPlayer) return;
         flash = GameObject.Find("Plane");
         flash.SetActive(false);
     }
    
     void Update(){
+        if (!isLocalPlayer) return;
         adjustCurrentHealth();
     }
    
     public void adjustCurrentHealth(){
-                       
+        if (!isLocalPlayer) return;
         /**Deduct the current health value from its damage**/  
        
         if(previousHealth > curHP){
@@ -59,21 +63,23 @@ public class PlayerHealthBar : MonoBehaviour{
     }
 	
 	void OnTriggerEnter(Collider other) {
+        if (!isLocalPlayer) return;
         if (hurtcooldown < 101) {
             flash.SetActive(true);
             curHP -= 5;
             hurtcooldown = hurt_cooldown;
-            Vector3 launch = new Vector3(500f,0,0); //other.transform.position - transform.position
-            GetComponent<Rigidbody>().AddForce(launch, ForceMode.VelocityChange);
+            GetComponent<FirstPersonController>().Knockback();
         }
     }
     
     void FixedUpdate () {
+        if (!isLocalPlayer) return;
 		if (hurtcooldown/100 == 0) flash.SetActive(false);
 		if (hurtcooldown>0) hurtcooldown -= 1;
 	}
    
     void OnGUI () {
+        if (!isLocalPlayer) return;
         int posX = 10;
         int posY = 10;
         int height = 15;

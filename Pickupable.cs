@@ -25,9 +25,12 @@ public class Pickupable : NetworkBehaviour {
 		if (physics == 1) GetComponent<Renderer>().material = zero_grav_mat;
 		if (physics == 2) GetComponent<Renderer>().material = fixed_pos_mat;
 		updatePhysics(physics);
+	}
+    
+    void Start () {
         localPlayer = GameObject.FindWithTag("Player").GetComponent<Respawn>().FindLocalPlayer();
         localName = localPlayer.GetComponent<Respawn>().playerName;
-	}
+    }
     
     public void PostStart (string p) {
         ownerName = p;
@@ -64,8 +67,8 @@ public class Pickupable : NetworkBehaviour {
 		if (distance.sqrMagnitude<=9 && !transform.parent) {
 			GUICrossHair.grabmode = 1;
 			if (Input.GetMouseButtonDown(0) && physics != 2) { //on left mouse click
-                NewOwner(localName);
                 GrabSubvertAuthority(localName);
+                NewOwner(localName);
                 holding = true;
                 drop = false;
 				if (tag == "Respawn")
@@ -172,6 +175,10 @@ public class Pickupable : NetworkBehaviour {
 			}
 			
 			if (drop && localPlayer.GetComponent<CharacterController>().isGrounded) {
+                Drop();
+                Color color = GetComponent<Renderer>().material.color;
+                color.a = 1.0f;
+                GetComponent<Renderer>().material.color = color;
                 CmdDrop();
 				holding = false;
 				if (tag == "Respawn" && physics == 0) {

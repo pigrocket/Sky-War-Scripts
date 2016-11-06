@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
- using UnityStandardAssets.Characters.FirstPerson;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class Inventory : MonoBehaviour {
 
@@ -84,6 +84,7 @@ public class Inventory : MonoBehaviour {
 			open = !open;
 			inv.SetActive(open);
             transform.parent.parent.GetComponent<FirstPersonController>().enabled = !open;
+            //get parent player -> ().relay -> ().Cmd color "player" children renderers on all clients except local 
 		}
 		
 		if (open) {
